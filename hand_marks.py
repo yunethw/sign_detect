@@ -110,7 +110,7 @@ def frame_capture(path):
         ret, frame = cap.read()
         if ret:
             frames_array[i] = frame
-    selected_frames = random.choices(frames_array, k=5)
+    selected_frames = random.sample(frames_array, k=50)
     return selected_frames
 
 
