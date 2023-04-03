@@ -31,14 +31,8 @@ with mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_
     while cap.isOpened():
         ret, frame = cap.read()
         image, results = mediapipe_detect(frame, hands)
-        if results.multi_hand_landmarks and len(results.multi_hand_landmarks) == 2:
-            wrist_left = results.multi_hand_landmarks[0].landmark[0]
-            wrist_right = results.multi_hand_landmarks[1].landmark[0]
-            index_left = results.multi_hand_landmarks[0].landmark[8]
-            index_right = results.multi_hand_landmarks[1].landmark[8]
-            rel_x = abs((index_right.x - index_left.x)/(wrist_right.x - wrist_left.x))
-            rel_y = abs((index_right.y - index_left.y)/(wrist_right.y - wrist_left.y))
-            print(rel_x, rel_y)
+
+        print(len(results.multi_hand_landmarks) if results.multi_hand_landmarks else 'No hand')
         # if results.multi_hand_landmarks:
         #     index_right = results.multi_hand_landmarks[0].landmark[8]
         #     draw_landmarks(image, results.multi_hand_landmarks)

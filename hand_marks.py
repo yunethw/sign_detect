@@ -46,10 +46,10 @@ def extract_landmarks(frames, path):
         else:
             if not results.multi_hand_world_landmarks[0]:
                 landmarks_ar_wlx = [0] * 21
-                landmarks_ar_wly = landmarks_ar_wlx
-                landmarks_ar_lx = landmarks_ar_wlx
-                landmarks_ar_ly = landmarks_ar_wlx
-                landmarks_ar_lz = landmarks_ar_wlx
+                landmarks_ar_wly = [0] * 21  # replaced all with [0] * 21 for clarity
+                landmarks_ar_lx = [0] * 21
+                landmarks_ar_ly = [0] * 21
+                landmarks_ar_lz = [0] * 21
 
                 landmarks_ar_wrx = [lmk.x for lmk in results.multi_hand_world_landmarks[1].landmark]
                 landmarks_ar_wry = [lmk.y for lmk in results.multi_hand_world_landmarks[1].landmark]
@@ -105,15 +105,24 @@ def frame_capture(path):
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    frames_array = np.empty((num_frames, frame_height, frame_width, 3), dtype=np.uint8)
+    frames_array = np.empty((50, frame_height, frame_width, 3), dtype=np.uint8)
+    rand_int = np.random.choice(num_frames, 50, False)
+    j = 0
     for i in range(num_frames):
         ret, frame = cap.read()
-        if ret:
-            frames_array[i] = frame
-    selected_frames = random.sample(frames_array, k=50)
-    return selected_frames
+        if ret and i in rand_int:
+            frames_array[j] = frame
+            j += 1
+
+    return frames_array
+
 
 
 def initiate_hand_marks(path):
     selected_frames = frame_capture(path)
     extract_landmarks(selected_frames, path)
+
+
+if __name__ == '__main__':
+    initiate_hand_marks('a.mp4')
+
