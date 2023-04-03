@@ -107,7 +107,7 @@ def frame_capture(path):
     for i in range(num_frames):
         ret, frame = cap.read()
         if ret and i in rand_int:
-            frames_array[i] = frame
+            frames_array[j] = frame
             j += 1
 
     return frames_array
