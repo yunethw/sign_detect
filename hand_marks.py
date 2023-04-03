@@ -29,44 +29,45 @@ def extract_landmarks(frames, path):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = hands.process(frame)
 
-        if results.multi_hand_world_landmarks and len(results.multi_hand_world_landmarks) == 2:
-            landmarks_ar_wlx = [lmk.x for lmk in results.multi_hand_world_landmarks[0].landmark]
-            landmarks_ar_wly = [lmk.y for lmk in results.multi_hand_world_landmarks[0].landmark]
-            landmarks_ar_wrx = [lmk.x for lmk in results.multi_hand_world_landmarks[1].landmark]
-            landmarks_ar_wry = [lmk.y for lmk in results.multi_hand_world_landmarks[1].landmark]
+        if results.multi_hand_world_landmarks:
+            if len(results.multi_hand_world_landmarks) == 2:
+                landmarks_ar_wlx = [lmk.x for lmk in results.multi_hand_world_landmarks[0].landmark]
+                landmarks_ar_wly = [lmk.y for lmk in results.multi_hand_world_landmarks[0].landmark]
+                landmarks_ar_wrx = [lmk.x for lmk in results.multi_hand_world_landmarks[1].landmark]
+                landmarks_ar_wry = [lmk.y for lmk in results.multi_hand_world_landmarks[1].landmark]
 
-            landmarks_ar_lx = [lmk.x for lmk in results.multi_hand_landmarks[0].landmark]
-            landmarks_ar_rx = [lmk.x for lmk in results.multi_hand_landmarks[1].landmark]
-            landmarks_ar_ly = [lmk.y for lmk in results.multi_hand_landmarks[0].landmark]
-            landmarks_ar_ry = [lmk.y for lmk in results.multi_hand_landmarks[1].landmark]
+                landmarks_ar_lx = [lmk.x for lmk in results.multi_hand_landmarks[0].landmark]
+                landmarks_ar_rx = [lmk.x for lmk in results.multi_hand_landmarks[1].landmark]
+                landmarks_ar_ly = [lmk.y for lmk in results.multi_hand_landmarks[0].landmark]
+                landmarks_ar_ry = [lmk.y for lmk in results.multi_hand_landmarks[1].landmark]
 
-            landmarks_ar_lz = [lmk.z for lmk in results.multi_hand_landmarks[0].landmark]
-            landmarks_ar_rz = [lmk.z for lmk in results.multi_hand_landmarks[1].landmark]
-        elif len(results.multi_hand_world_landmarks) == 1:
-            landmarks_ar_wlx = [0] * 21
-            landmarks_ar_wly = [0] * 21
-            landmarks_ar_lx = [0] * 21
-            landmarks_ar_ly = [0] * 21
-            landmarks_ar_lz = [0] * 21
+                landmarks_ar_lz = [lmk.z for lmk in results.multi_hand_landmarks[0].landmark]
+                landmarks_ar_rz = [lmk.z for lmk in results.multi_hand_landmarks[1].landmark]
+            elif len(results.multi_hand_world_landmarks) == 1:
+                landmarks_ar_wlx = [0] * 21
+                landmarks_ar_wly = [0] * 21
+                landmarks_ar_lx = [0] * 21
+                landmarks_ar_ly = [0] * 21
+                landmarks_ar_lz = [0] * 21
 
-            landmarks_ar_wrx = [lmk.x for lmk in results.multi_hand_world_landmarks[0].landmark]
-            landmarks_ar_wry = [lmk.y for lmk in results.multi_hand_world_landmarks[0].landmark]
-            landmarks_ar_rx = [lmk.x for lmk in results.multi_hand_landmarks[0].landmark]
-            landmarks_ar_ry = [lmk.y for lmk in results.multi_hand_landmarks[0].landmark]
+                landmarks_ar_wrx = [lmk.x for lmk in results.multi_hand_world_landmarks[0].landmark]
+                landmarks_ar_wry = [lmk.y for lmk in results.multi_hand_world_landmarks[0].landmark]
+                landmarks_ar_rx = [lmk.x for lmk in results.multi_hand_landmarks[0].landmark]
+                landmarks_ar_ry = [lmk.y for lmk in results.multi_hand_landmarks[0].landmark]
 
-            landmarks_ar_rz = [lmk.z for lmk in results.multi_hand_landmarks[0].landmark]
-        else:
-            landmarks_ar_wlx = [0] * 21
-            landmarks_ar_wly = landmarks_ar_wlx
-            landmarks_ar_lx = landmarks_ar_wlx
-            landmarks_ar_ly = landmarks_ar_wlx
-            landmarks_ar_lz = landmarks_ar_wlx
+                landmarks_ar_rz = [lmk.z for lmk in results.multi_hand_landmarks[0].landmark]
+            else:
+                landmarks_ar_wlx = [0] * 21
+                landmarks_ar_wly = landmarks_ar_wlx
+                landmarks_ar_lx = landmarks_ar_wlx
+                landmarks_ar_ly = landmarks_ar_wlx
+                landmarks_ar_lz = landmarks_ar_wlx
 
-            landmarks_ar_wrx = landmarks_ar_wlx
-            landmarks_ar_wry = landmarks_ar_wlx
-            landmarks_ar_rx = landmarks_ar_wlx
-            landmarks_ar_ry = landmarks_ar_wlx
-            landmarks_ar_rz = landmarks_ar_wlx
+                landmarks_ar_wrx = landmarks_ar_wlx
+                landmarks_ar_wry = landmarks_ar_wlx
+                landmarks_ar_rx = landmarks_ar_wlx
+                landmarks_ar_ry = landmarks_ar_wlx
+                landmarks_ar_rz = landmarks_ar_wlx
 
         for idx_l in range(21):
             landmarks_world_left.append(landmarks_ar_wlx[idx_l])
