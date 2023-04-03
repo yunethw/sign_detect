@@ -1,7 +1,7 @@
 import cv2 as cv
 from mediapipe import solutions
 import numpy as np
-import extract_landmarks as extract
+import extract_landmarks_copy as extract
 
 mp_hands = solutions.hands
 mp_drawing = solutions.drawing_utils
@@ -54,10 +54,8 @@ def start():
                 printed = False
                 start_tick = cv.getTickCount()
 
-
-
         time = int((cv.getTickCount() - start_tick) / freq)
-        if time < 15:  # start recording procedure
+        if time < 13:  # start recording procedure
             frame = cv.putText(frame, letter, text_top_position, font, 1, color)
             if time <= 3:  # count down
                 frame = cv.putText(frame, 'Recording in {}'.format(3 - time), text_below_position, font, 1, color)
@@ -70,10 +68,10 @@ def start():
                     print('Letter {}: {} frames recorded'.format(letter, frame_num))
                     printed = True
                     frame = cv.putText(frame, 'Processing...', text_below_position, font, 1, color)
+                else:
                     print('Extracting landmarks...')
                     extract.extract_landmarks(frames_array[0:frame_num], frame_height, frame_width, datafile_path, letter)
                     print('Done.')
-
         else:
             frame = cv.putText(frame, 'Press letter key to record', text_top_position, font, 1, color)
 
