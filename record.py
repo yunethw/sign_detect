@@ -1,6 +1,6 @@
 import cv2 as cv
 import mediapipe as mp
-import extract_landmarks_copy as extract
+from SignData import SignData
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
@@ -33,7 +33,7 @@ def start():
     datafile_path = 'data.xlsx'
 
     results_array = []
-    frame_num = 0
+    dataframe = SignData(datafile_path)
 
     hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
     while cap.isOpened():
@@ -61,15 +61,14 @@ def start():
             elif 3 < time <= 8:  # recording 5 seconds
                 frame = cv.putText(frame, '{}'.format(time - 3), text_below_position, font, 1, color)
                 results_array.append(results)
-                frame_num += 1
             else:  # recording complete
                 if not printed:
-                    print('Letter {}: {} frames recorded'.format(letter, frame_num))
+                    print('Letter {}: {} frames recorded'.format(letter, len(results_array)))
                     printed = True
                     frame = cv.putText(frame, 'Processing...', text_below_position, font, 1, color)
                 elif printed and not extracted:
                     print('Extracting landmarks...')
-                    extract.extract_landmarks(results_array[0:frame_num], datafile_path, letter)
+                    dataframe.add_data(results_array, letter)
                     extracted = True
                     print('Done.')
         else:
