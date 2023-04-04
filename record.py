@@ -1,10 +1,9 @@
 import cv2 as cv
-from mediapipe import solutions
-import numpy as np
+import mediapipe as mp
 import extract_landmarks_copy as extract
 
-mp_hands = solutions.hands
-mp_drawing = solutions.drawing_utils
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
 
 def mediapipe_detect(image, mp_model):
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
@@ -23,6 +22,7 @@ def draw_landmarks(image, results):
 def start():
     start_tick = 0
     printed = False
+    extracted = False
     letter = '0'
     cap = cv.VideoCapture(0)
     freq = cv.getTickFrequency()
@@ -32,9 +32,7 @@ def start():
     color = (255, 255, 255)
     datafile_path = 'data.xlsx'
 
-    frame_width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-    frame_height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-    frames_array = np.empty((200, frame_height, frame_width, 3), dtype=np.uint8)  # declaring frame storage with extra memory
+    results_array = []
     frame_num = 0
 
     hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
@@ -42,7 +40,7 @@ def start():
         ret, frame = cap.read()
         frame = cv.flip(frame, 1)
         frame, results = mediapipe_detect(frame, hands)
-        frame_copy = frame
+
         if results.multi_hand_landmarks:
             draw_landmarks(frame, results.multi_hand_landmarks)
         key = cv.waitKey(10)
@@ -52,6 +50,7 @@ def start():
             elif ord('a') <= key <= ord('z'):
                 letter = chr(key).upper()
                 printed = False
+                extracted = False
                 start_tick = cv.getTickCount()
 
         time = int((cv.getTickCount() - start_tick) / freq)
@@ -61,16 +60,17 @@ def start():
                 frame = cv.putText(frame, 'Recording in {}'.format(3 - time), text_below_position, font, 1, color)
             elif 3 < time <= 8:  # recording 5 seconds
                 frame = cv.putText(frame, '{}'.format(time - 3), text_below_position, font, 1, color)
-                frames_array[frame_num] = frame_copy
+                results_array.append(results)
                 frame_num += 1
             else:  # recording complete
                 if not printed:
                     print('Letter {}: {} frames recorded'.format(letter, frame_num))
                     printed = True
                     frame = cv.putText(frame, 'Processing...', text_below_position, font, 1, color)
-                else:
+                elif printed and not extracted:
                     print('Extracting landmarks...')
-                    extract.extract_landmarks(frames_array[0:frame_num], frame_height, frame_width, datafile_path, letter)
+                    extract.extract_landmarks(results_array[0:frame_num], datafile_path, letter)
+                    extracted = True
                     print('Done.')
         else:
             frame = cv.putText(frame, 'Press letter key to record', text_top_position, font, 1, color)
