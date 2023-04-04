@@ -1,6 +1,6 @@
 import cv2 as cv
 import mediapipe as mp
-from SignData import SignData
+import data
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
@@ -33,7 +33,7 @@ def start():
     datafile_path = 'data.xlsx'
 
     results_array = []
-    dataframe = SignData(datafile_path)
+    dataframe = data.SignData()
 
     hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
     while cap.isOpened():
@@ -76,6 +76,7 @@ def start():
 
         cv.imshow('Feed', frame)
 
+    dataframe.save_data(datafile_path)
     cap.release()
     cv.destroyAllWindows()
 
