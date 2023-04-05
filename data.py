@@ -24,20 +24,27 @@ class SignData:
         selected_results = random.sample(results, k=50) if len(results) > 50 else results
         for result in selected_results:
             if result.multi_hand_landmarks:
-                if len(result.multi_hand_world_landmarks) == 2:
-                    wlx = [lmk.x for lmk in result.multi_hand_world_landmarks[0].landmark]
-                    wly = [lmk.y for lmk in result.multi_hand_world_landmarks[0].landmark]
-                    wrx = [lmk.x for lmk in result.multi_hand_world_landmarks[1].landmark]
-                    wry = [lmk.y for lmk in result.multi_hand_world_landmarks[1].landmark]
+                if len(result.multi_hand_landmarks) == 2:
+                    match result.multi_handedness[0].classification[0].label:
+                        case 'Right':
+                            right, left = 0, 1
+                        case 'Left':
+                            left, right = 0, 1
 
-                    lx = [lmk.x for lmk in result.multi_hand_landmarks[0].landmark]
-                    ly = [lmk.y for lmk in result.multi_hand_landmarks[0].landmark]
-                    lz = [lmk.z for lmk in result.multi_hand_landmarks[0].landmark]
+                    wlx = [lmk.x for lmk in result.multi_hand_world_landmarks[left].landmark]
+                    wly = [lmk.y for lmk in result.multi_hand_world_landmarks[left].landmark]
+                    wrx = [lmk.x for lmk in result.multi_hand_world_landmarks[right].landmark]
+                    wry = [lmk.y for lmk in result.multi_hand_world_landmarks[right].landmark]
 
-                    rx = [lmk.x for lmk in result.multi_hand_landmarks[1].landmark]
-                    ry = [lmk.y for lmk in result.multi_hand_landmarks[1].landmark]
-                    rz = [lmk.z for lmk in result.multi_hand_landmarks[1].landmark]
-                elif len(result.multi_hand_world_landmarks) == 1:
+                    lx = [lmk.x for lmk in result.multi_hand_landmarks[left].landmark]
+                    ly = [lmk.y for lmk in result.multi_hand_landmarks[left].landmark]
+                    lz = [lmk.z for lmk in result.multi_hand_landmarks[left].landmark]
+
+                    rx = [lmk.x for lmk in result.multi_hand_landmarks[right].landmark]
+                    ry = [lmk.y for lmk in result.multi_hand_landmarks[right].landmark]
+                    rz = [lmk.z for lmk in result.multi_hand_landmarks[right].landmark]
+
+                elif len(result.multi_hand_landmarks) == 1:
                     wlx = [0] * 21
                     wly = [0] * 21
                     lx = [0] * 21
