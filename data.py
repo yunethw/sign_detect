@@ -80,7 +80,7 @@ class SignData:
                 landmarks_relative.append(rz[idx])
 
             # complete row of data
-            landmarks_array = [ord(letter) - 64] + landmarks_world_left + landmarks_world_right + landmarks_relative
+            landmarks_array = [ord(letter) - 65] + landmarks_world_left + landmarks_world_right + landmarks_relative
             next_row_index = len(self.df.index)
             self.df.loc[next_row_index] = landmarks_array
 
