@@ -10,7 +10,7 @@ DATAFILE_PATH = 'data.xlsx'
 
 mp_hands = mp.solutions.hands
 mp_drawing = mp.solutions.drawing_utils
-
+hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
 def mediapipe_detect(image, mp_model):
     image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
@@ -39,7 +39,7 @@ def start():
 
     cap = cv.VideoCapture(0)
 
-    hands = mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5)
+
     while cap.isOpened():
         ret, frame = cap.read()
         frame = cv.flip(frame, 1)
@@ -59,7 +59,7 @@ def start():
                 start_tick = cv.getTickCount()
 
         time = int((cv.getTickCount() - start_tick) / freq)
-        if time < 13:  # start recording procedure
+        if time < 11:  # start recording procedure
             frame = cv.putText(frame, letter, TEXT_TOP_POS, FONT, 1, COLOR)
             if time <= 3:  # count down
                 frame = cv.putText(frame, 'Recording in {}'.format(3 - time), TEXT_BELOW_POS, FONT, 1, COLOR)
