@@ -1,7 +1,7 @@
 import pandas as pd
 import random
 
-
+ROWS_PER_LETTER = 65
 class SignData:
     def __init__(self):
         # creating array of column names
@@ -21,7 +21,7 @@ class SignData:
         landmarks_world_left = []
         landmarks_world_right = []
 
-        selected_results = random.sample(results, k=50) if len(results) > 50 else results
+        selected_results = random.sample(results, k=ROWS_PER_LETTER) if len(results) > ROWS_PER_LETTER else results
         for result in selected_results:
             if result.multi_hand_landmarks:
                 if len(result.multi_hand_landmarks) == 2:
@@ -89,8 +89,11 @@ class SignData:
             landmarks_world_right.clear()
             landmarks_relative.clear()
 
-    def save_data(self, datafile_path):
-        excel_path = datafile_path
+    def save_data(self, excel_datafile_path):
+        excel_path = excel_datafile_path
         with pd.ExcelWriter(excel_path) as writer:
             self.df.to_excel(writer, sheet_name='Landmarks', index=False)
         print(f'Data saved at {excel_path}')
+        self.df.astype({'LETTER': 'int32'})
+        self.df.to_csv('data.csv', index=False, header=False)
+        print(f'CSV Data saved at data.csv')
