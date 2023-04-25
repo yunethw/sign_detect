@@ -6,7 +6,8 @@ mp_drawing = solutions.drawing_utils
 
 
 def mediapipe_detect(image, mp_model):
-    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    flip_image = cv2.flip(image, flipCode=1)
+    image = cv2.cvtColor(flip_image, cv2.COLOR_BGR2RGB)
     image.flags.writeable = False
     results = mp_model.process(image)
     image.flags.writeable = True
@@ -30,19 +31,31 @@ cap = cv2.VideoCapture(0)
 with mp_hands.Hands(max_num_hands=2, min_detection_confidence=0.5, min_tracking_confidence=0.5) as hands:
     while cap.isOpened():
         ret, frame = cap.read()
+        # cv2.flip(frame, 1)
         image, results = mediapipe_detect(frame, hands)
 
-        print(len(results.multi_hand_landmarks) if results.multi_hand_landmarks else 'No hand')
-        # if results.multi_hand_landmarks:
-        #     index_right = results.multi_hand_landmarks[0].landmark[8]
-        #     draw_landmarks(image, results.multi_hand_landmarks)
-        #     print(index_right.z)
+        # print(results.multi_handedness[0].classification[0].label)
+        # print(results.multi_handedness[1].classification[0].label)
+        if results.multi_hand_landmarks:
+            for i, result in enumerate(results.multi_hand_landmarks):
+                print(i, result.landmark[8].x, end='\t')
+            print()
+            for result in results.multi_hand_world_landmarks:
+                print(result.landmark[8].x, end='\t')
+            print()
+            for result in results.multi_handedness:
+                print(result.classification[0].label, end='\t')
+            print('\n')
 
-        # if results.multi_hand_landmarks:
-        #     draw_landmarks(image, results.multi_hand_landmarks)
-        # cv2.flip()
-        cv2.imshow('OpenCV Feed', cv2.flip(image, flipCode=1))
-        if cv2.waitKey(10) & 0xFF == ord('q'):
+            # index_right = results.multi_hand_landmarks[0].landmark[8]
+            # draw_landmarks(image, results.multi_hand_landmarks)
+            # print(index_right.z)
+
+        if results.multi_hand_landmarks:
+            draw_landmarks(image, results.multi_hand_landmarks)
+
+        cv2.imshow('OpenCV Feed', image)
+        if cv2.waitKey(100) & 0xFF == ord('q'):
             break
 
 cap.release()

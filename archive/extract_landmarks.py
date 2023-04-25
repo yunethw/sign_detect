@@ -93,32 +93,24 @@ landmarks_world_right = []
 #     excel_path = 'hand_marks.xlsx'
 #     with pd.ExcelWriter(excel_path, mode='a') as writer:
 #         df.to_excel(writer, sheet_name='Landmarks', index=False)
-def extract_landmarks(frames, height, width, datafile, letter):
-
-    def select_frames(all_frames, frame_height, frame_width):
-        rand_int = np.random.choice(len(all_frames), 50, replace=False)
-        frames_array = np.empty((50, frame_height, frame_width, 3), dtype=np.uint8)
-        j = 0
-        for i in range(len(all_frames)):
-            if i in rand_int:
-                frames_array[j] = all_frames[i]
-                j += 1
-        return frames_array
-
-    selected_frames = select_frames(frames, height, width)
+def extract_landmarks(frames, datafile, letter):
 
     dynm_cols = ['LETTER']
+
     for idx_d_col_1 in range(21):
         dynm_cols = dynm_cols + [f'L{idx_d_col_1}X'] + [f'L{idx_d_col_1}Y']
+
     for idx_d_col_2 in range(21):
         dynm_cols = dynm_cols + [f'R{idx_d_col_2}X'] + [f'R{idx_d_col_2}Y']
+
     for idx_d_col_3 in range(21):
         dynm_cols = dynm_cols + [f'{idx_d_col_3}X'] + [f'{idx_d_col_3}Y'] + [f'L{idx_d_col_3}Z'] + [f'R{idx_d_col_3}Z']
 
     df = pd.DataFrame(columns=dynm_cols)
 
     hands = mp.solutions.hands.Hands()
-    for i, frame in enumerate(selected_frames):
+
+    for i, frame in enumerate(frames):
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = hands.process(frame)
 
@@ -176,7 +168,7 @@ def extract_landmarks(frames, height, width, datafile, letter):
             landmarks_relative.append(landmarks_ar_lz[idx])
             landmarks_relative.append(landmarks_ar_rz[idx])
 
-        landmarks_array = [ord(letter)-64] + landmarks_world_left + landmarks_world_right + landmarks_relative
+        landmarks_array = [ord(path[0])-96] + landmarks_world_left + landmarks_world_right + landmarks_relative
 
         landmarks_world_left.clear()
         landmarks_world_right.clear()
@@ -184,7 +176,7 @@ def extract_landmarks(frames, height, width, datafile, letter):
 
         df.loc[i] = landmarks_array
 
-    excel_path = datafile
+    excel_path = 'hand_marks.xlsx'
     with pd.ExcelWriter(excel_path, mode='a') as writer:
         df.to_excel(writer, sheet_name='Landmarks', index=False)
 

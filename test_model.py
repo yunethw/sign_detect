@@ -20,12 +20,13 @@ while cap.isOpened():
     if results.multi_hand_landmarks:
         record.draw_landmarks(frame, results.multi_hand_landmarks)
         features = data.get_features(results)
-        features = np.array(features).reshape(1, 168)
+        features = np.array(features).reshape(1, 176)
         prediction = model.predict(features)
         letter = chr(np.argmax(prediction) + 65)
         probability = prediction[0][np.argmax(prediction)]
         if probability > 0.5:
-            frame = cv.putText(frame, '{0}: {1:.4}'.format(letter, probability), TEXT_TOP_POS, FONT, 1, COLOR)
+            frame = cv.rectangle(frame, (0,0), (200, 45), (0, 0, 0), thickness=-1)
+            frame = cv.putText(frame, '{0}: {1:.4}'.format(letter, probability), TEXT_TOP_POS, FONT, 1, COLOR, thickness=2)
 
     cv.imshow('OpenCV Feed', frame)
     if cv.waitKey(100) & 0xFF == ord('q'):
